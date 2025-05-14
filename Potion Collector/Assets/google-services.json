@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "249115808850",
+    "project_id": "potion-collector-e6143",
+    "storage_bucket": "potion-collector-e6143.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:249115808850:android:bc6fd9e25036c7d2437b8b",
+        "android_client_info": {
+          "package_name": "com.shreekanth.potioncollector"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD5_2rFXe2tSsLlVYekcRz7pOZPI9uzRrI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
