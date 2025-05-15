@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using UnityEngine;
 using Firebase.Database;
 
@@ -26,10 +27,17 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-        // Firebase init (assumes FirebaseApp is already initialized elsewhere)
-        dbRef = FirebaseDatabase.DefaultInstance.RootReference;
-        StartGame();
+        StartCoroutine(WaitForFirebase());
     }
+
+    private IEnumerator WaitForFirebase()
+    {
+        while (!FirebaseInit.IsInitialized)
+            yield return null;
+
+        Debug.Log("Firebase is now safe to use.");
+    }
+
 
     public void StartGame()
     {
