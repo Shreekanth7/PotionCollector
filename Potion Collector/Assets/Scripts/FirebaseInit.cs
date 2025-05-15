@@ -12,7 +12,7 @@ public class FirebaseInit : MonoBehaviour
 
     void Awake()
     {
-        DontDestroyOnLoad(gameObject); // Optional: if persistent between scenes
+        DontDestroyOnLoad(gameObject); 
     }
 
     void Start()
@@ -23,7 +23,7 @@ public class FirebaseInit : MonoBehaviour
 
             if (dependencyStatus == DependencyStatus.Available)
             {
-                Debug.Log("✅ Firebase is ready.");
+                Debug.Log(" Firebase is ready.");
                 IsInitialized = true;
 
                 // Proceed with anonymous login
@@ -34,7 +34,7 @@ public class FirebaseInit : MonoBehaviour
             }
             else
             {
-                Debug.LogError($"❌ Firebase dependencies not resolved: {dependencyStatus}");
+                Debug.LogError($" Firebase dependencies not resolved: {dependencyStatus}");
                 IsInitialized = false;
             }
         });
@@ -46,19 +46,19 @@ public class FirebaseInit : MonoBehaviour
         {
             if (task.IsCanceled)
             {
-                Debug.LogError("❌ Anonymous sign-in was canceled.");
+                Debug.LogError(" Anonymous sign-in was canceled.");
                 return;
             }
 
             if (task.IsFaulted)
             {
-                Debug.LogError("❌ Anonymous sign-in failed: " + task.Exception);
+                Debug.LogError(" Anonymous sign-in failed: " + task.Exception);
                 return;
             }
 
             FirebaseUser newUser = task.Result.User;
             CurrentUser = newUser;
-            Debug.Log("✅ Signed in anonymously. UID: " + newUser.UserId);
+            Debug.Log(" Signed in anonymously. UID: " + newUser.UserId);
         });
     }
 

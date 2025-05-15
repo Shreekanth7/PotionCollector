@@ -1,7 +1,11 @@
 using System;
 using System.Collections;
+using System.Threading.Tasks;
+using Firebase;
+using Firebase.Auth;
 using UnityEngine;
 using Firebase.Database;
+using Firebase.Extensions;
 
 public class GameManager : MonoBehaviour
 {
@@ -12,7 +16,14 @@ public class GameManager : MonoBehaviour
     public string SessionId { get; private set; }
 
     private DatabaseReference dbRef;
+    
+    private bool gameHasEnded = false;
+    private FirebaseAuth _auth;
+    private FirebaseUser _user;
+    private DatabaseReference _dbReference;
 
+    public bool IsGameOver => gameHasEnded;
+    
     private void Awake()
     {
         // Singleton pattern
@@ -24,19 +35,59 @@ public class GameManager : MonoBehaviour
         Instance = this;
         DontDestroyOnLoad(gameObject);
     }
-
-    private void Start()
+    
+    private IEnumerator Start()
     {
-        StartCoroutine(WaitForFirebase());
+        yield return new WaitUntil(() => FirebaseInit.IsInitialized);
+
+        // Force Firebase Database load
+        FirebaseApp.CheckAndFixDependenciesAsync().ContinueWith(task =>
+        {
+            if (task.Result != DependencyStatus.Available)
+            {
+                Debug.LogError("Firebase initialization failed: " + task.Result);
+            }
+            else
+            {
+                FirebaseApp app = FirebaseApp.DefaultInstance;
+                _auth = FirebaseAuth.DefaultInstance;
+        
+                SignInAnonymously();
+            }
+        });
+        
+        dbRef = FirebaseDatabase.DefaultInstance.RootReference;
+
+        Debug.Log("✅ dbRef initialized successfully.");
+        StartGame();
+        StartCoroutine(StartGameTimer(60f));
+    }
+    
+    private void SignInAnonymously()
+    {
+        _auth.SignInAnonymouslyAsync().ContinueWith(task =>
+        {
+            if (task.IsCompletedSuccessfully && !task.IsFaulted && !task.IsCanceled)
+            {
+                AuthResult result = task.Result;
+                _user = result.User;
+
+                _dbReference = FirebaseDatabase.DefaultInstance.RootReference;
+                Debug.Log("Signed in anonymously as: " + _user.UserId);
+                Debug.Log("Firebase initialized successfully");
+            }
+            else
+            {
+                Debug.LogError("Firebase anonymous sign-in failed: " + task.Exception);
+            }
+        });
     }
 
-    private IEnumerator WaitForFirebase()
-    {
-        while (!FirebaseInit.IsInitialized)
-            yield return null;
 
-        Debug.Log("Firebase is now safe to use.");
-        StartGame();
+    IEnumerator StartGameTimer(float duration)
+    {
+        yield return new WaitForSeconds(duration);
+        EndGame();
     }
     
     public void StartGame()
@@ -70,6 +121,9 @@ public class GameManager : MonoBehaviour
 
     public void EndGame()
     {
+        if (gameHasEnded) return;
+        
+        gameHasEnded = true;
         DateTime endTime = DateTime.Now;
         string sessionId = Guid.NewGuid().ToString();
         EventManager.Trigger("GameEndedEvent", sessionId, CurrentScore);
@@ -82,10 +136,23 @@ public class GameManager : MonoBehaviour
         CurrentScore += value;
         EventManager.Trigger("ScoreUpdatedEvent", CurrentScore, value);
     }
-
+    
+    
     private void SaveSessionData(DateTime endTime)
     {
-        EventManager.Trigger("FirebaseSyncStartedEvent", "saveSession");
+        Debug.Log("SaveSessionData() called");
+
+        if (dbRef == null)
+        {
+            Debug.LogError(" dbRef is null. Firebase may not be initialized.");
+            return;
+        }
+
+        if (string.IsNullOrEmpty(SessionId))
+        {
+            Debug.LogError(" SessionId is null or empty.");
+            return;
+        }
 
         var sessionData = new SessionData
         {
@@ -96,13 +163,16 @@ public class GameManager : MonoBehaviour
         };
 
         string json = JsonUtility.ToJson(sessionData);
+        Debug.Log($"✅ Saving session: {json}");
 
         dbRef.Child("sessions").Child(SessionId).SetRawJsonValueAsync(json).ContinueWith(task =>
         {
             bool success = !task.IsFaulted && !task.IsCanceled;
             EventManager.Trigger("FirebaseSyncCompletedEvent", "saveSession", success);
+            Debug.Log(" Firebase session save completed, success: " + success);
         });
     }
+
 
     [Serializable]
     private class SessionData

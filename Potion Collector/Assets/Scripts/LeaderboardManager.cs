@@ -28,7 +28,6 @@ public class LeaderboardManager : MonoBehaviour
                     topScores.Add(entry);
                 }
 
-                // Firebase returns ascending order, so we reverse
                 topScores = topScores.OrderByDescending(e => e.score).ToList();
                 onScoresLoaded?.Invoke(topScores);
             });
