@@ -36,34 +36,43 @@ public class GameManager : MonoBehaviour
             yield return null;
 
         Debug.Log("Firebase is now safe to use.");
+        StartGame();
     }
-
-
+    
     public void StartGame()
     {
         CurrentScore = 0;
         SessionStartTime = DateTime.Now;
         SessionId = Guid.NewGuid().ToString();
 
+        Debug.Log("Game Started");
         EventManager.Trigger("GameStartedEvent", SessionStartTime, SessionId);
     }
 
+
     public void PauseGame()
     {
-        EventManager.Trigger("GamePausedEvent", DateTime.Now);
         Time.timeScale = 0f;
+
+        Debug.Log("Game Paused");
+        EventManager.Trigger("GamePausedEvent", DateTime.Now);
     }
+
 
     public void ResumeGame()
     {
-        EventManager.Trigger("GameResumedEvent", DateTime.Now);
         Time.timeScale = 1f;
+
+        Debug.Log("Game Resumed");
+        EventManager.Trigger("GameResumedEvent", DateTime.Now);
     }
+
 
     public void EndGame()
     {
         DateTime endTime = DateTime.Now;
-        EventManager.Trigger("GameEndedEvent", endTime, CurrentScore);
+        string sessionId = Guid.NewGuid().ToString();
+        EventManager.Trigger("GameEndedEvent", sessionId, CurrentScore);
         SaveSessionData(endTime);
     }
 

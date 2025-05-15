@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: GreenPotion
   m_EditorClassIdentifier: 
   potionName: Green
-  potency: 1
-  potionPrefab: {fileID: 1021588353636906, guid: f75e1608d9f1e4f06a5027de3c813b5d, type: 3}
+  potency: 5
+  potionTime: 1
+  prefab: {fileID: 1021588353636906, guid: f75e1608d9f1e4f06a5027de3c813b5d, type: 3}
   description: 

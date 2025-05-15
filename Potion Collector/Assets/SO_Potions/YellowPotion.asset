@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: YellowPotion
   m_EditorClassIdentifier: 
   potionName: Yellow
-  potency: 4
-  potionPrefab: {fileID: 1305883699301654, guid: 093a44e6b1a384df88fabf2976ac0055, type: 3}
+  potency: 2
+  potionTime: 2
+  prefab: {fileID: 1305883699301654, guid: 093a44e6b1a384df88fabf2976ac0055, type: 3}
   description: 

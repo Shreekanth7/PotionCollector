@@ -3,9 +3,8 @@ using UnityEngine;
 
 public class Potion : MonoBehaviour {
     public PotionData data;
-
     void Start() {
-        Destroy(gameObject, 5f); // Auto despawn
+        Destroy(gameObject, data.potionTime); 
     }
 
     void OnMouseDown() {

@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: BluePotion
   m_EditorClassIdentifier: 
   potionName: Blue
-  potency: 0
-  potionPrefab: {fileID: 1280056767771472, guid: e53cd9b7f6ac44f3ebe9af3f0f302b4f, type: 3}
+  potency: 8
+  potionTime: 1
+  prefab: {fileID: 1280056767771472, guid: e53cd9b7f6ac44f3ebe9af3f0f302b4f, type: 3}
   description: 
